@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Logs and generated output
+*.log
+*.pcap
+*.png
+*.csv
+
+# Metrics JSON (generated at runtime)
+containment_metrics.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
