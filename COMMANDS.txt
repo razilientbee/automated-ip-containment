@@ -1,0 +1,119 @@
+================================================================================
+  SOC LAB — AUTOMATED MALICIOUS IP CONTAINMENT
+  COMPLETE COMMAND REFERENCE
+  Attacker (Kali)   : 192.168.100.10  interface: eth1
+  Defender (Chiron) : 192.168.100.20  interface: enp0s8
+================================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  EXPERIMENT WORKFLOW  (run in this exact order every time)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  STEP 1 — Start defender (Chiron, Terminal 1):
+  sudo python3 defender/ip_containment.py
+
+  STEP 2 — Optional: monitor traffic (Chiron, Terminal 2):
+  sudo tcpdump -i enp0s8 -n 'src 192.168.100.10' -l
+
+  STEP 3 — Launch attack (Kali):
+  sudo hping3 -S -p 80 --flood 192.168.100.20
+  OR
+  sudo python3 malicious_flood.py
+
+  STEP 4 — Watch containment report appear on Chiron Terminal 1
+
+  STEP 5 — Stop attack on Kali:
+  Ctrl+C
+
+  STEP 6 — Verify block on Chiron:
+  bash verify/verify_containment.sh check
+
+  STEP 7 — Generate visualization on Chiron:
+  python3 defender/visualize_metrics.py
+
+  STEP 8 — Reset for next run on Chiron:
+  bash verify/verify_containment.sh reset
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ATTACK COMMANDS  (Kali)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  # Maximum flood:
+  sudo hping3 -S -p 80 --flood 192.168.100.20
+
+  # Controlled rate (100 pkts/s):
+  sudo hping3 -S -p 80 --interval u10000 192.168.100.20
+
+  # Exactly 500 packets then stop:
+  sudo hping3 -S -p 80 --flood -c 500 192.168.100.20
+
+  # Python flood script (infinite):
+  sudo python3 malicious_flood.py
+
+  # Python flood script (100 packets):
+  sudo python3 malicious_flood.py --count 100
+
+  # Mixed: nmap scan + flood (two terminals):
+  sudo nmap -sS -T4 -p 1-1024 192.168.100.20
+  sudo hping3 -S -p 80 --flood 192.168.100.20
+
+  # Verify block is working (should get no response):
+  ping -c 3 192.168.100.20
+  sudo hping3 -S -p 80 -c 5 192.168.100.20
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  VERIFICATION COMMANDS  (Chiron)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  bash verify/verify_containment.sh check       # show iptables rules
+  bash verify/verify_containment.sh flush       # remove attacker block rule
+  bash verify/verify_containment.sh flushall    # clear entire INPUT chain
+  bash verify/verify_containment.sh watch       # live iptables counters
+  bash verify/verify_containment.sh sniff       # tcpdump SYN from attacker
+  bash verify/verify_containment.sh sniff-all   # tcpdump all from attacker
+  bash verify/verify_containment.sh log         # tail log file
+  bash verify/verify_containment.sh metrics     # print JSON summary
+  bash verify/verify_containment.sh reset       # clear rules + metrics
+  bash verify/verify_containment.sh ping-test   # ping attacker VM
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  VISUALIZATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  # Generate report (default paths):
+  python3 defender/visualize_metrics.py
+
+  # Custom output path:
+  python3 defender/visualize_metrics.py --out ~/Desktop/report.png
+
+  # Copy PNG to host machine (run on host):
+  scp vboxuser@192.168.100.20:/tmp/containment_report.png ~/Desktop/
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  SUCCESS CRITERIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metric                    | Target      | Excellent
+  --------------------------|-------------|----------
+  Detection → Block         | < 100 ms    | < 20 ms
+  Detection → Full Stop     | < 3000 ms   | < 1000 ms
+  Post-block leakage        | < 10 pkts   | 0 packets
+  False positives           | 0           | 0
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  GIT WORKFLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  git status                   # see what changed
+  git add <file>               # stage a file
+  git commit -m "msg"          # commit staged files
+  git push                     # push to GitHub
+  git log --oneline            # view commit history
+
+================================================================================
