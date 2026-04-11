@@ -49,3 +49,14 @@ sudo hping3 -S -p 80 --flood 192.168.100.20
 | Detection to Block      | < 100 ms   |
 | Detection to Full Stop  | < 3000 ms  |
 | Post-block leakage      | < 10 pkts  |
+
+## Results
+
+### First Successful Containment
+| Metric                  | Result       |
+|-------------------------|--------------|
+| Detection → Block       | 586.261 ms   |
+| Detection → Full Stop   | 2751.683 ms  |
+| Rating                  | GOOD         |
+| Post-block leakage      | 68 packets   |
+| 3s target               | PASS ✅      |
