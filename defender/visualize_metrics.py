@@ -56,15 +56,15 @@ max_stop = max(stop_ms)
 std_stop = np.std(stop_ms)
 
 # ── Theme ──────────────────────────────────────────────────────────────────────
-DARK   = "#0d1117"
-PANEL  = "#161b22"
-BORDER = "#21262d"
+DARK   = "#ffffff"
+PANEL  = "#f8f9fa"
+BORDER = "#dee2e6"
 ACCENT = "#00e5ff"
 GREEN  = "#2ed573"
 RED    = "#ff4757"
 YELLOW = "#ffa502"
-GRAY   = "#8b949e"
-WHITE  = "#e6edf3"
+GRAY   = "#495057"
+WHITE  = "#000000"
 
 plt.rcParams.update({
     "figure.facecolor": DARK,
@@ -106,7 +106,7 @@ x     = np.array(event_nums)
 x_lbl = [str(i) for i in event_nums]
 
 # ── Figure ─────────────────────────────────────────────────────────────────────
-fig = plt.figure(figsize=(22, 15), dpi=110, facecolor=DARK)
+fig = plt.figure(figsize=(22, 15), dpi=110, facecolor="white")
 fig.suptitle("SOC LAB — IP CONTAINMENT METRICS REPORT",
              fontsize=15, color=ACCENT, fontweight="bold", y=0.975)
 fig.text(0.5, 0.955,
@@ -236,7 +236,7 @@ fig.text(0.5, 0.015,
          f"{data[0].get('window_seconds',5)}s window",
          ha="center", fontsize=7.5, color=GRAY)
 
-plt.savefig(args.out, dpi=110, bbox_inches="tight", facecolor=DARK)
+plt.savefig(args.out, dpi=110, bbox_inches="tight", facecolor="white")
 
 print(f"\n{'='*50}")
 print(f"  REPORT SAVED → {args.out}")
