@@ -60,3 +60,15 @@ sudo hping3 -S -p 80 --flood 192.168.100.20
 | Rating                  | GOOD         |
 | Post-block leakage      | 68 packets   |
 | 3s target               | PASS ✅      |
+
+## Final Results — 5 Use Case Trials
+
+| Event | Use Case                  | Block Latency | Rating    |
+|-------|---------------------------|---------------|-----------|
+| 1     | High-Rate SYN Flood       | 14.781 ms     | EXCELLENT |
+| 2     | Slow-Rate SYN Flood       | 12.211 ms     | EXCELLENT |
+| 3     | Multi-Port Flood          | 20.824 ms     | GOOD      |
+| 4     | Reconnaissance + Flood    | 22.881 ms     | GOOD      |
+| 5     | Re-attack After Containment | 27.103 ms   | GOOD      |
+
+**Average containment: 19.6 ms — all trials PASS**
