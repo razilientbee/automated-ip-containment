@@ -48,7 +48,17 @@ detected     = {}
 blocked_ips  = set()
 last_pkt     = defaultdict(float)
 post_blk     = defaultdict(int)
-metrics_log  = []
+# Load existing metrics if file exists — preserves events across runs
+if os.path.exists(METRICS_FILE):
+    try:
+        with open(METRICS_FILE, "r") as f:
+            metrics_log = json.load(f)
+    except:
+        metrics_log = []
+else:
+    metrics_log = []
+    
+
 state_lock   = Lock()
 
 # ── iptables helper ───────────────────────────────────────────────────────────
