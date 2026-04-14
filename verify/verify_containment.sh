@@ -96,7 +96,7 @@ reset)
     echo ""
     echo "[RESET] Clearing rules and metrics for next run..."
     sudo iptables -D INPUT -s 192.168.100.10 -j DROP 2>/dev/null || true
-    echo "[]" > /tmp/containment_metrics.json
+    sudo bash -c 'echo "[]" > /tmp/containment_metrics.json'
     sudo truncate -s 0 /var/log/ip_containment.log
     echo "  Done. Ready for next run."
     ;;
